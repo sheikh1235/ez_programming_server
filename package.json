@@ -17,6 +17,7 @@
     "joi-password-complexity": "^5.1.0",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.2.4",
-    "uuid": "^8.3.2"
+    "uuid": "^8.3.2",
+    "whatwg-url": "^11.0.0"
   }
 }
