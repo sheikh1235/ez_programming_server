@@ -5,8 +5,20 @@ const verify = require('./verifyToken')
 
 
 router.post("/save", async (req, res) => {
-    await new Code({ id: req.body.id, body: req.body.code, user_id: req.userid }).save();
-    res.status(200).send({ message: "Code Saved!!" });
+    console.log(req.body.data)
+    Code.findOne({id: req.body.data.codeId})
+    .then(async (code)=>{
+        if(!code){
+            await new Code({ id: req.body.data.codeId, name: req.body.data.codeName, body: req.body.data.codeBody, user_id: req.userid })
+            .save();
+            return res.status(200).send("Code updated")
+        }
+        else{
+            code.body = req.body.data.codeBody;
+            code.save();
+            return res.status(200).send("New code updated")
+        }
+    })
 });
 
 router.get("/get:id", async (req, res) => {
@@ -15,7 +27,7 @@ router.get("/get:id", async (req, res) => {
     const code = await Code.findOne({id: req.params.id})
     if (code){
         console.log('Found')
-        res.status(200).send({ code_name: code.name , code_body: code.body});
+        res.status(200).send({ id: code.id , name: code.name , body: code.body});
     }
     else{
         console.log('Not found')
