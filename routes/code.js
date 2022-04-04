@@ -4,7 +4,8 @@ const Code = require("../models/code")
 const verify = require('./verifyToken')
 
 
-router.post("/save", async (req, res) => {
+router.post("/save",verify, async (req, res) => {
+    console.log('--------')
     console.log(req.body.data)
     Code.findOne({id: req.body.data.codeId})
     .then(async (code)=>{
@@ -21,13 +22,13 @@ router.post("/save", async (req, res) => {
     })
 });
 
-router.get("/get:id", async (req, res) => {
+router.get("/get:id",verify, async (req, res) => {
 
     console.log(req.params.id)
     const code = await Code.findOne({id: req.params.id})
     if (code){
         console.log('Found')
-        res.status(200).send({ id: code.id , name: code.name , body: code.body});
+        res.status(200).send({ id: code.id , name: code.name , body: code.body, user_id: req.userid});
     }
     else{
         console.log('Not found')

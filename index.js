@@ -2,7 +2,6 @@ const express = require("express");
 const { generateFile } = require("./generateFile");
 const { executeFile } = require("./executeFile");
 const connection = require("./db");
-const userRoutes = require("./routes/users");
 const authRoutes = require("./routes/auth");
 const codeRoutes = require("./routes/code")
 
@@ -32,7 +31,6 @@ app.post("/run", async (req, res) => {
 });
 
 // routes
-app.use("/api/users", userRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/code", codeRoutes);
 
