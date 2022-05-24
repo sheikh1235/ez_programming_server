@@ -5,8 +5,6 @@ const verify = require('./verifyToken')
 
 
 router.post("/save",verify, async (req, res) => {
-    console.log('--------')
-    console.log(req.body.data)
     Code.findOne({id: req.body.data.codeId})
     .then(async (code)=>{
         if(!code){
@@ -24,16 +22,21 @@ router.post("/save",verify, async (req, res) => {
 
 router.get("/get:id",verify, async (req, res) => {
 
-    console.log(req.params.id)
     const code = await Code.findOne({id: req.params.id})
     if (code){
-        console.log('Found')
         res.status(200).send({ id: code.id , name: code.name , body: code.body, user_id: req.userid});
     }
     else{
-        console.log('Not found')
         res.status(405).send({ message: 'Invalid Code Id'});
     }
+});
+
+router.get("/myallcodes", verify, async (req, res) => {
+    console.log('GOttt')
+    var codes = await Code.find({user_id: req.userid});
+    res.json(codes);
+
+
 });
 
 
