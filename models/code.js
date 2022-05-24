@@ -11,6 +11,9 @@ const codeSchema = new mongoose.Schema({
     body: {
         type: String
     },
+    desc: {
+        type: String
+    },
     user_id:{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'

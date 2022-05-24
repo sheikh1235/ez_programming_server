@@ -8,12 +8,14 @@ router.post("/save",verify, async (req, res) => {
     Code.findOne({id: req.body.data.codeId})
     .then(async (code)=>{
         if(!code){
-            await new Code({ id: req.body.data.codeId, name: req.body.data.codeName, body: req.body.data.codeBody, user_id: req.userid })
+            await new Code({ id: req.body.data.codeId, name: req.body.data.codeName, body: req.body.data.codeBody, desc:req.body.data.codeDesc , user_id: req.userid })
             .save();
             return res.status(200).send("Code updated")
         }
         else{
+            code.name = req.body.data.codeName;
             code.body = req.body.data.codeBody;
+            code.desc = req.body.data.codeDesc;
             code.save();
             return res.status(200).send("New code updated")
         }
@@ -24,7 +26,8 @@ router.get("/get:id",verify, async (req, res) => {
 
     const code = await Code.findOne({id: req.params.id})
     if (code){
-        res.status(200).send({ id: code.id , name: code.name , body: code.body, user_id: req.userid});
+        res.status(200).send({ id: code.id , name: code.name , body: code.body, desc: code.desc,
+             user_id: req.userid});
     }
     else{
         res.status(405).send({ message: 'Invalid Code Id'});
