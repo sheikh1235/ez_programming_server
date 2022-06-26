@@ -2,7 +2,7 @@ const express = require("express");
 const { generateFile } = require("./generateFile");
 const { generateDebugFile } = require("./generateDebugFile");
 const { executeFile } = require("./executeFile");
-const { debugFile, next, end } = require("./debugFile");
+const { debugFile, next, end, nextLine } = require("./debugFile");
 const connection = require("./db");
 const authRoutes = require("./routes/auth");
 const codeRoutes = require("./routes/code");
@@ -36,7 +36,11 @@ app.post("/debug", async (req, res) => {
     const filepath = await generateFile(req.body.code);
     const debugFilePath = await generateDebugFile(filepath);
     // initialization of the debugger.
-    await debugFile(debugFilePath, req.body.input);
+    let breakpoint = "main"
+    if(req.body.breakpoint > 0){
+      breakpoint = req.body.breakpoint;
+    }
+    await debugFile(debugFilePath, breakpoint);
     const output = await next("info locals");
     return res.json({ output });
   } catch (err) {
@@ -56,7 +60,7 @@ app.get("/next", async (req, res) => {
 });
 
 // to move debugger to next line or function
-app.post("/end", async (req, res) => {
+app.get("/end", async (req, res) => {
   try {
     const output = await end();
     return res.json({ output });
@@ -75,8 +79,6 @@ app.post("/add-user", async(req, resp) => {
   let product = new User(req.body);
   let result = await product.save();
   console.log("add succes");
-  //console.log(result._id);
-  //console.log(result._id.getTimestamp());
   resp.send(result);
 });
 

@@ -2,7 +2,7 @@ const { spawn } = require("child_process");
 const { resolve } = require("path");
 
 
-let nextOutput;
+let nextOutput = "";
 let gdb;
 
 // runs the gdb debugger on the code whose output is already made.
@@ -15,7 +15,7 @@ const debugFile = (outputPath, breakpoint) => {
       // checks if statement contains = then return the data.
       const output = `${data}`;
       if (nextFlag) {
-        nextOutput = output;
+        nextOutput += output;
         dataWritten = true;
       }
       
@@ -25,7 +25,7 @@ const debugFile = (outputPath, breakpoint) => {
     });
     gdb.on("error", (data) => {
       console.log(`error: ${data}`);
-      const err = { message: `${data}` };
+      const err = `${data}`;
       reject(err);
     });
 
@@ -37,7 +37,7 @@ const debugFile = (outputPath, breakpoint) => {
       console.log(`child process exited with code ${code}`);
     });
 
-    gdb.stdin.write("break main" + "\n");
+    gdb.stdin.write("break " + breakpoint + "\n");
     gdb.stdin.write("r\n");
     setTimeout(() => {
       resolve();
@@ -59,6 +59,7 @@ const next = (command) => {
         resolve(nextOutput);
         nextFlag = false;
         dataWritten = false;
+        nextOutput = "";
       }
     }, 50);
   });
