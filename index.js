@@ -10,7 +10,7 @@ const codeRoutes = require("./routes/code");
 const cors = require("cors");
 
 const app = express();
-//connection();
+connection();
 
 app.use(cors());
 app.options("*", cors());
@@ -68,6 +68,69 @@ app.get("/end", async (req, res) => {
 // routes
 app.use("/api/auth", authRoutes);
 app.use("/api/code", codeRoutes);
+
+//-------------------------------------------------------------
+
+app.post("/add-user", async(req, resp) => {
+  let product = new User(req.body);
+  let result = await product.save();
+  console.log("add succes");
+  //console.log(result._id);
+  //console.log(result._id.getTimestamp());
+  resp.send(result);
+});
+
+app.get("/users", async(req, resp) => {
+  const products = await User.find();
+  if (products.length > 0) {
+      resp.send(products);
+  } else {
+      resp.send({ result: "No User found" });
+  }
+});
+
+app.delete("/product/:id", async(req, resp) => {
+      let result = await User.deleteOne({ _id: req.params.id });
+      resp.send(result);
+  }),
+  app.get("/product/:id", async(req, resp) => {
+      let result = await User.findOne({ _id: req.params.id });
+      if (result) {
+          resp.send(result);
+      } else {
+          resp.send({ result: "No Record Found." });
+      }
+  });
+
+app.put("/product/:id", async(req, resp) => {
+  let result = await User.updateOne({ _id: req.params.id }, { $set: req.body });
+  resp.send(result);
+});
+
+app.put("/product/:id", async(req, resp) => {
+  let result = await User.updateOne({ _id: req.params.id }, { $set: req.body });
+  resp.send(result);
+});
+
+app.get("/search/:key", async(req, resp) => {
+  let result = await User.find({
+      $or: [{
+              firstName: { $regex: req.params.key, $options: "i" },
+          },
+
+          {
+              lastName: { $regex: req.params.key, $options: "i" },
+          },
+
+          {
+              email: { $regex: req.params.key, $options: "i" },
+          },
+      ],
+  });
+  resp.send(result);
+});
+//-------------------------------------------------------------
+
 
 app.listen(5000, () => {
   console.log("server is listening at port 5000");
