@@ -10,7 +10,7 @@ const codeRoutes = require("./routes/code");
 const cors = require("cors");
 
 const app = express();
-connection();
+//connection();
 
 app.use(cors());
 app.options("*", cors());

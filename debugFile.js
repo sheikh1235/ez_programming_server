@@ -61,7 +61,7 @@ const next = (command) => {
         dataWritten = false;
       }
     }, 50);
-  }); 
+  });
 };
 
 

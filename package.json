@@ -11,15 +11,12 @@
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^5.0.1",
-    "child_process": "^1.0.2",
     "cors": "^2.8.5",
     "express": "^4.17.1",
-    "fs": "0.0.1-security",
     "joi": "^17.6.0",
     "joi-password-complexity": "^5.1.0",
     "jsonwebtoken": "^8.5.1",
-    "mongoose": "^6.2.4",
-    "path": "^0.12.7",
+    "mongoose": "^6.2.10",
     "uuid": "^8.3.2",
     "whatwg-url": "^11.0.0"
   }
