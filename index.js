@@ -1,5 +1,7 @@
 const express = require("express");
 const { generateFile } = require("./generateFile");
+const { User } = require("./models/user");
+const bcrypt = require("bcrypt");
 const { generateDebugFile } = require("./generateDebugFile");
 const { executeFile } = require("./executeFile");
 const { debugFile, next, end } = require("./debugFile");
@@ -72,6 +74,9 @@ app.use("/api/code", codeRoutes);
 //-------------------------------------------------------------
 
 app.post("/add-user", async(req, resp) => {
+  let new_user = req.body;
+  const salt = await bcrypt.genSalt(Number(10));
+	new_user.password = await bcrypt.hash(new_user.password, salt);
   let product = new User(req.body);
   let result = await product.save();
   console.log("add succes");
