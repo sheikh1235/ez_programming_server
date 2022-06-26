@@ -4,7 +4,7 @@ const { resolve } = require("path");
 
 let nextOutput;
 let gdb;
-let nextFlag = false;
+
 // runs the gdb debugger on the code whose output is already made.
 const debugFile = (outputPath, breakpoint) => {
   return new Promise((resolve, reject) => {
@@ -12,21 +12,13 @@ const debugFile = (outputPath, breakpoint) => {
 
     gdb = spawn(`gdb`, [`${outputPath}`]);
     gdb.stdout.on("data", (data) => {
-      if (data.includes("=")) {
-        // checks if statement contains = then return the data.
-        const output = `${data}`;
-        console.log("output message...\n\n" + output);
-        console.log(output);
-        if (nextFlag) {
-          nextOutput = output;
-
-          console.log("output message next...\n\n" + output);
-          console.log(output);
-          dataWritten = true;
-        }
-
-        resolve(output);
+      // checks if statement contains = then return the data.
+      const output = `${data}`;
+      if (nextFlag) {
+        nextOutput = output;
+        dataWritten = true;
       }
+      
     });
     gdb.stderr.on("data", (data) => {
       console.log(`stderror: ${data}`);
@@ -47,37 +39,31 @@ const debugFile = (outputPath, breakpoint) => {
 
     gdb.stdin.write("break main" + "\n");
     gdb.stdin.write("r\n");
-
-    gdb.stdin.write("info locals\n");
+    setTimeout(() => {
+      resolve();
+    }, 3000);
   });
 };
 
 // move debugger to next logic
-let nextInfoWritten = false;
 let dataWritten = false;
-
-const next = () => {
+let nextFlag = false;
+const next = (command) => {
   nextFlag = true;
-  gdb.stdin.write("next\n");
-  gdb.stdin.write("info locals\n");
+  gdb.stdin.write(command+"\n");
   return new Promise((resolve, reject) => {
     
     const wait = setInterval(() => {
-      if (dataWritten) {
-        console.log("hello");    
+      if (dataWritten) {    
         clearInterval(wait);
-        console.log(dataWritten);
-        console.log("next output: ", nextOutput);
-        
         resolve(nextOutput);
+        nextFlag = false;
+        dataWritten = false;
       }
-      else{
-        console.log(dataWritten);
-        reject();
-      }
-    }, 5000);
+    }, 50);
   });
 };
+
 
 const end = () => {
   gdb.stdin.end();

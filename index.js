@@ -35,8 +35,9 @@ app.post("/debug", async (req, res) => {
   try {
     const filepath = await generateFile(req.body.code);
     const debugFilePath = await generateDebugFile(filepath);
-    const output = await debugFile(debugFilePath, req.body.input);
-
+    // initialization of the debugger.
+    await debugFile(debugFilePath, req.body.input);
+    const output = await next("info locals");
     return res.json({ output });
   } catch (err) {
     return res.json({ output: err.stack });
@@ -45,11 +46,12 @@ app.post("/debug", async (req, res) => {
 // to move debugger to next line or function
 app.get("/next", async (req, res) => {
   try {
-    const output = await next();
-    console.log("output from next: ", output);
-    return res.json({ output });
+    const nextLine = await next("next");
+    const infoLocals = await next("info locals");
+    
+    return res.json({ nextLine: nextLine, infoLocals: infoLocals});
   } catch (err) {
-    return res.json({ output: err.stack });
+    return res.json({ });
   }
 });
 
