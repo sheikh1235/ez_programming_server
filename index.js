@@ -1,10 +1,8 @@
 const express = require("express");
 const { generateFile } = require("./generateFile");
-const { User } = require("./models/user");
-const bcrypt = require("bcrypt");
 const { generateDebugFile } = require("./generateDebugFile");
 const { executeFile } = require("./executeFile");
-const { debugFile, next, end } = require("./debugFile");
+const { debugFile, next, end, nextLine } = require("./debugFile");
 const connection = require("./db");
 const authRoutes = require("./routes/auth");
 const codeRoutes = require("./routes/code");
@@ -38,7 +36,11 @@ app.post("/debug", async (req, res) => {
     const filepath = await generateFile(req.body.code);
     const debugFilePath = await generateDebugFile(filepath);
     // initialization of the debugger.
-    await debugFile(debugFilePath, req.body.breakpoint);
+    let breakpoint = "main"
+    if(req.body.breakpoint > 0){
+      breakpoint = req.body.breakpoint;
+    }
+    await debugFile(debugFilePath, breakpoint);
     const output = await next("info locals");
     return res.json({ output });
   } catch (err) {
